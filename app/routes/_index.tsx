@@ -1,8 +1,9 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Response } from "@remix-run/web-fetch";
+import { Response, json } from "@remix-run/node";
 import { Form, useLoaderData, useActionData } from "@remix-run/react";
 import { useState, useEffect } from "react";
 import { db } from "~/utils/db.server";
+import { requireUserId, logout } from "~/utils/auth.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -11,8 +12,11 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader({  }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
+  const userId = await requireUserId(request);
+  
   const scores = await db.effortScore.findMany({
+    where: { userId },
     orderBy: { date: 'desc' },
     take: 10,
     select: {
@@ -35,25 +39,24 @@ export async function loader({  }: LoaderFunctionArgs) {
     ? (validTimes.reduce((sum, score) => sum + (score.timeSpent || 0), 0) / validTimes.length).toFixed(0)
     : "0";
 
-  return new Response(JSON.stringify({ scores, totalScore, averageScore, averageTime }), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  return json({ scores, totalScore, averageScore, averageTime });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  const userId = await requireUserId(request);
   const form = await request.formData();
   const intent = form.get("intent");
+
+  if (intent === "logout") {
+    return logout(request);
+  }
 
   if (intent === "delete") {
     const id = Number(form.get("id"));
     await db.effortScore.delete({
       where: { id }
     });
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { "Content-Type": "application/json" },
-    });
+    return json({ success: true });
   }
 
   const score = Number(form.get("score"));
@@ -63,22 +66,18 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // Validate score range
   if (score < -10 || score > 10) {
-    return new Response(JSON.stringify({ error: "分數必須在 -10 到 10 之間！" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return json({ error: "分數必須在 -10 到 10 之間！" }, { status: 400 });
   }
 
-  // Get current total score
-  const scores = await db.effortScore.findMany();
+  // Get current total score for this user
+  const scores = await db.effortScore.findMany({
+    where: { userId }
+  });
   const currentTotal = scores.reduce((sum, s) => sum + s.score, 0);
 
   // Check if adding this score would make total negative
   if (currentTotal + score < 0) {
-    return new Response(JSON.stringify({ error: "分數不夠，快去卷！" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return json({ error: "分數不夠，快去卷！" }, { status: 400 });
   }
 
   await db.effortScore.create({
@@ -86,13 +85,12 @@ export async function action({ request }: ActionFunctionArgs) {
       score,
       description,
       timeSpent,
-      date
+      date,
+      userId
     }
   });
 
-  return new Response(JSON.stringify({ success: true }), {
-    headers: { "Content-Type": "application/json" },
-  });
+  return json({ success: true });
 }
 
 type EffortScore = {
@@ -290,6 +288,17 @@ export default function Index() {
             ))}
           </div>
         </div>
+        <Form method="post" className="inline">
+          <input type="hidden" name="intent" value="logout" />
+          <button
+            type="submit"
+            className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300
+                     focus:outline-none focus:underline"
+            title="Logout"
+          >
+            Logout
+          </button>
+        </Form>
       </div>
     </div>
   );
