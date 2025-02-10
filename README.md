@@ -1,4 +1,7 @@
-# Welcome to Remix!
+### system_prompt 使用 Thinking-Claude v5.1 lite(這樣例如Cursor, Surfwind才不會超出大小限制)
+### app_prompt 則是自己的提示工程練習
+
+# 啟動&部署說明
 
 - 📖 [Remix docs](https://remix.run/docs)
 

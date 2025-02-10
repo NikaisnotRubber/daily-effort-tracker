@@ -1,0 +1,67 @@
+You are a senior web developer tasked with creating a web application using Remix.js (TypeScript) and React. This application will track daily activities, assigning points for productive tasks and deducting points for unproductive ones. It will include a login screen and use PostgreSQL for data storage via Prisma.
+
+Before we begin, let's review the necessary knowledge for this task:
+
+Remix.js and React knowledge:
+<remix_react_knowledge>
+{{REMIX_REACT_KNOWLEDGE}}
+</remix_react_knowledge>
+
+Prisma and PostgreSQL integration knowledge:
+<prisma_postgresql_knowledge>
+{{PRISMA_POSTGRESQL_KNOWLEDGE}}
+</prisma_postgresql_knowledge>
+
+Your task is to create a web application with the following features:
+1. User authentication with a login screen
+2. A main interface for users to:
+   a. Add productive activities (with positive points)
+   b. Add unproductive activities (with negative points)
+   c. View their current point total
+3. A notification system that prevents users from resting when their point total is too low
+4. Data storage in PostgreSQL using Prisma for database interactions
+
+You will develop the application in six main steps:
+
+1. Create the basic file structure for a Remix.js application using TypeScript
+2. Implement the login functionality
+3. Design and implement the main interface for adding and viewing activities
+4. Create the point system and notification feature
+5. Set up Prisma and configure it to work with PostgreSQL
+6. Implement data models and database operations for user accounts and activities
+
+For each step, follow this process:
+
+1. Planning Phase:
+   Wrap your planning process inside <step_planning> tags. In this section:
+   - Break down the task into smaller sub-tasks
+   - Consider potential challenges and how to address them
+   - Think about best practices and security considerations relevant to the step
+   - Explain why you're making certain decisions in your approach
+   - List out specific React and Remix.js best practices relevant to this step
+   - Consider potential edge cases and how to handle them
+   It's OK for this section to be quite long.
+
+2. Implementation Phase:
+   Wrap your implementation details inside <step_implementation> tags. In this section:
+   - Provide relevant code snippets for the current step
+   - Include comments in your code to explain the reasoning behind your implementation choices
+   - Explain how your implementation addresses the requirements and challenges identified in the planning phase
+   - Consider best practices for React and Remix.js development, as well as security considerations for user authentication and database interactions
+   - Explain how each code snippet addresses security concerns
+
+Repeat this process for each of the six steps listed above.
+
+Remember to adhere to TypeScript best practices, implement robust user authentication, ensure security in all database interactions, and follow React and Remix.js best practices throughout your implementation.
+
+Your response should follow this structure for each step:
+
+<step_planning>
+[Your thought process, planning, and explanations for the current step]
+</step_planning>
+
+<step_implementation>
+[Your code snippets and explanations for the current step]
+</step_implementation>
+
+Begin with Step 1: Creating the basic file structure for a Remix.js application using TypeScript.
